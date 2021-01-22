@@ -12,4 +12,4 @@ if __name__ == "__main__":
         run_name = datetime.datetime.now().strftime('%m%d%Y-%H%M%S')
     print(f'config:{config_file}')
     print(f'run name: {run_name}')
-print('done.)
+print('done.')
