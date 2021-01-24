@@ -80,8 +80,6 @@ def run(config_file, run_name):
     test_controller = TestingController(model_config, test_config, model_filepath)
 
     trained_model = training_controller.train()
-    print('Skipping testing.')
-    return
     test_controller.test(trained_model)
 
 if __name__ == "__main__":

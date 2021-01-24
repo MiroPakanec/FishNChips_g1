@@ -12,7 +12,7 @@
         "maxpool_kernel": 6
     },
     "train":{
-        "data":"/Users/aau/Projects/fishnchips_g2/data/validation.hdf5",
+        "data":"/home/ubuntu/data/training.hdf5",
         "epochs": 1000,
         "patience": 1000,
         "warmup":10,
@@ -22,7 +22,7 @@
         "lr_mult": 100
     },
     "validate":{
-        "data":"/Users/aau/Projects/fishnchips_g2/data/validation.hdf5",
+        "data":"/home/ubuntu/data/validation.hdf5",
         "reads":3,
         "batch_size":300,
         "stride":300,

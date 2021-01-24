@@ -4,17 +4,17 @@ import time
 import datetime
 import os 
 
-from utils.process_utils import get_generator
+from utils.process_utils import get_test_generator, get_generator
 from utils.attention_evaluation_utils import evaluate_batch
 from utils.assembler import assemble
 from utils.Other import analyse_cigar
 
 class TestingController():
     def __init__(self, model_config, test_config, model_filepath):
-        self._generator = get_generator(model_config, test_config, kind="testing")
+        self._generator = get_test_generator(model_config, test_config, kind="testing")        
         self._reads = test_config['reads']
         self._batch_size = test_config['batch_size']
-        self._aligner = mp.Aligner("../useful_files/zymo-ref-uniq_2019-03-15.fa")
+        self._aligner = mp.Aligner(test_config['reference'])
         self._with_assembler = model_config['encoder_max_length'] == test_config['stride']
         self._model_file_path = model_filepath
         self._result_dic = self._get_result_dic(self._model_file_path)
@@ -72,18 +72,16 @@ class TestingController():
 
         for read in range(len(self._result_dic), self._reads):
             try:
-                x_windows, y_windows, _, _, read_id = next(self._generator.get_window_batch(label_as_bases=True))
+
+                x_windows,read_id = next(self._generator.get_window_batch(label_as_bases=True))                   
                 nr_windows = len(x_windows)
-
-                assert nr_windows == len(y_windows)
                 start_time = time.time()
-
+                
                 y_pred = []
                 for b in range(0,nr_windows, self._batch_size):
                     x_batch = x_windows[b:b+self._batch_size]
                     print(f"{read:02d}/{self._reads:02d} Predicting windows {self._pretty_print_progress(b, b+len(x_batch), nr_windows)} {b:04d}-{b+len(x_batch):04d}/{nr_windows:04d}", end="\r")
 
-                    # y_batch_true = y_windows[b:b+config['BATCH_SIZE']]
                     y_batch_pred, _ = evaluate_batch(x_batch, model, len(x_batch), as_bases=True)
                     y_pred.extend(y_batch_pred)
 
